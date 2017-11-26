@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <script type="text/javascript" src="jquery-3.2.1.js"></script>
+    <script type="text/javascript" src="underscore.js"></script>
+    <script type="text/javascript" src="backbone.js"></script>
+    <title>come on!</title>
+</head>
+
+<body>
+    <button id="divTip">Click me</button>
+    <div id='div'></div>
+    <script type="text/javascript">
+    // $(document).ready(function() {
+    //     $('#divTip').click(function() {
+    //         /////////////////////////////////
+    //         var info = {};
+    //         info = _.defaults(info, {
+    //             name: 'george',
+    //             age: 34
+    //         });
+    //         info.age = 35;
+    //         console.log(info);
+    //         console.log(_.has(info, 'age'));
+    //         console.log(_.random(0, 1000));
+
+    //         $('#div').html(_.unescape('Curly, Larry & Moe'));
+
+    //         var tpl = _.template('hello <%=name %>');
+    //         $('#div').html(tpl({ name: 'george' }));
+    //         ///////////////////////////////
+    //     });
+
+    // });
+    var Person = Backbone.Model.extend({
+        defaults: {
+            name: 'george',
+            gender: 'male',
+            age: '35',
+            score: 100
+        }
+    });
+
+    var man = new Person();
+
+    var man2 = new Person();
+
+    man2.listenTo(man, 'change:name', function() {
+    	this.set('age', '45');
+    	console.log(man2.get('age'));
+    });
+
+    man.set('name', 'iris');
+
+    // var objEvent = {
+    //     'change:score': score_change,
+    //     'change:age': age_change
+    // };
+
+    // man.on(objEvent);
+
+    // function score_change(model, value) {
+    //     var oldScore = model.previous('score');
+    //     var newScore = value;
+    //     console.log('old score:' + oldScore + ', new score:' + newScore);
+    // }
+
+    // function age_change(model, value) {
+    //     var oldAge = model.previous('age');
+    //     var newAge = value;
+    //     console.log('old age:' + oldAge + ', new age:' + newAge);
+    // }
+
+    // man.set({ 'age': '36', score: '150' });
+
+    // man.on('fuckyou', function() {
+    //     console.log('triggered fuck you.');
+    // });
+
+    // man.on('change:gender', function(module, value) {
+    // 	console.log('new gender:' +  value);
+    // });
+
+    // man.trigger('fuckyou');
+    // man.trigger('change:gender');
+    // man.set('gender', 'shemale');
+    </script>
+</body>
+
+</html>

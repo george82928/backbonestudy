@@ -1,0 +1,195 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/css/bootstrap.min.css" integrity="sha384-PsH8R72JQ3SOdhVi3uxftmaW6Vc51MKb0q5P2rRUpPvrszuE4W1povHYgTpBfshb" crossorigin="anonymous">
+  <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.3/umd/popper.min.js" integrity="sha384-vFJXuSJphROIrBnz7yo7oB41mKfc8JzQZiCq4NCceLEaO4IHwicKwpJf9c9IpFgh" crossorigin="anonymous"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/js/bootstrap.min.js" integrity="sha384-alpBpkh1PFOepccYVYDB4do5UnbKysX5WZXm3XxPqe5iKTfUKjNkCk9SaVuEZflJ" crossorigin="anonymous"></script>
+  <script type="text/javascript" src="./jquery-3.2.1.js"></script>
+  <script type="text/javascript" src="./underscore.js"></script>
+  <script type="text/javascript" src="./backbone.js"></script>
+  <script type="text/javascript" src="./appliation.js"></script>
+  <link rel="stylesheet" type="text/css" href="./student.css">
+  <style>
+
+</style>
+<title>Book management system</title>
+</head>
+
+<body>
+<!--   <div id="stuManager">
+    <ul id="ulMessage">
+      <li class="li_h">
+        <span>number</span>
+        <span>name</span>
+        <span>gender</span>
+        <span>score</span>
+        <span>operation</span>
+      </li>
+    </ul>
+  </div>
+  <script type="text/template" id="item-template">
+    <span><%= StuID %></span>
+    <span class="show">
+      <div class="disp"><%= Name %></div>
+      <div class="edit">
+        <input type="text" name="Name" id="Name" class="inputtxt" size="8" />
+      </div>
+    </span>
+    <span class="show">
+      <div class="disp"><%= Sex %></div>
+      <div class="edit">
+        <select name="Sex" id="Sex">
+          <option value="male">male</option>
+          <option value="female">female</option>
+        </select>
+      </div>
+    </span>
+    <span class="show">
+      <div class="disp"><%= Score %></div>
+      <div class="edit">
+        <input type="text" name="Score" id="Score" class="inputtxt" size="8" />
+      </div>
+    </span>
+    <span><a href="#">Delete</a></span>
+  </script>
+  <div class="input">
+    <span class="spanl">
+      Code: <input type="text" readonly="readonly" name="StuID" id="StuID" class="inputtxt" size="10" />
+      <br>
+      Name: <input type="text" name="Name" id="Name" class="inputtxt" size="15" />
+    </span>
+    <br>
+    <span class="spanr">
+      Gender: <select name="Sex" id="Sex">
+        <option value="male">male</option>
+        <option value="female">female</option>
+      </select>
+      <br>
+      Score: <input type="text" name="Score" id="Score" class="inputtxt" size="8" />
+    </span>
+    <p class="btn">
+      <input type="button" name="" id="btnAdd" value="Add" class="inputbtn">
+    </p>
+    <p id="pStatus"></p>
+  </div>
+  <script type="text/javascript">
+    $(function() {
+
+
+    });
+  </script> -->
+<div id="books">
+  <form action="#" id="addBook">
+    <div>
+      <label for="title">Title</label>
+      <input type="text" id="title" />
+      <label for="author">Author:</label>
+      <input type="text" id="author" />
+      <label for="releaseDate">Release Date</label>
+      <input type="text" id="releaseDate" />
+      <label for="keywords">key Words:</label>
+      <input type="text" id="keywords" />
+      <button id="add">Add</button>
+    </div>
+  </form>
+
+</div> 
+
+  <script id="bookTemplate" type="text/template">
+   
+    <ul>
+      <li><%=title %></li>
+      <li><%=author %></li>
+      <li><%=releaseDate %></li>
+      <li><%=keywords %></li>
+    </ul>
+  <button class="delete">delete</button>
+  </script>
+<script type="text/javascript">
+  var app = app || {};
+
+  app.Book = Backbone.Model.extend({
+    defaults: {
+      coverImage:'img/placeholder.png',
+      title:'No title',
+      author:'Unknown',
+      releaseDate: 'Unknown',
+      keywords:'None'
+    }
+  });
+
+  app.Library = Backbone.Collection.extend({
+    model: app.Book,
+    url:'/api/books'
+  });
+
+  app.BookView = Backbone.View.extend({
+    tagName: 'div',
+    className: 'bookContainer',
+    template:_.template($('#bookTemplate').html()),
+    render: function() {
+      this.$el.html(this.template(this.model.toJSON()));
+      return this;
+    }, 
+    events: {
+      'click .delete': 'deleteBook'
+    },
+    deleteBook: function() {
+      this.model.destroy();
+      this.remove();
+    }
+  });
+
+  app.LibraryView = Backbone.View.extend({
+    el: '#books',
+    events: {
+      'click #add': 'addBook'
+    },
+
+    addBook: function(e) {
+      e.preventDefault();
+      var formData = {};
+      $('#addBook div').children('input').each(function(i, el) {
+        if($(el).val() !== '') {
+          formData[el.id] = $(el).val();
+        }
+      });
+      this.collection.create(formData);
+    },
+
+    initialize: function() {
+      this.collection = new app.Library();
+      this.collection.fetch({reset: true});
+      this.render();
+      this.listenTo(this.collection, 'add', this.renderBook);
+      this.listenTo(this.collection, 'reset', this.render);
+    },
+
+    render: function() {
+      this.collection.each(function(item) {
+        this.renderBook(item);
+      }, this);
+    },
+
+    renderBook: function(item) {
+      var bookView = new app.BookView({
+        model: item
+      });
+      this.$el.append(bookView.render().el);
+    }
+  });
+
+</script>
+
+<script type="text/javascript">
+  $(function () {
+
+
+    new app.LibraryView();
+  });
+</script>
+</body>
+
+</html>
